@@ -46,7 +46,8 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           cd ws
-          colcon build --symlink-install --packages-select fanuc_er4ia_moveit_config
+          colcon list | grep -E '^(fanuc_libs|fanuc_lrmate_description|fanuc_hardware_interface)\s'
+          colcon build --symlink-install --packages-up-to fanuc_er4ia_moveit_config
 
       - name: Verify launch Python syntax
         run: |
