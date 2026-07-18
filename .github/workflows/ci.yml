@@ -10,6 +10,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      ROS_DISTRO: humble
+      WS_DIR: ws
+      TARGET_PACKAGE: fanuc_er4ia_moveit_config
+      DESCRIPTION_PACKAGE: fanuc_lrmate_description
 
     steps:
       - name: Checkout package repository
@@ -38,18 +43,66 @@ jobs:
 
       - name: Install rosdep dependencies
         run: |
-          cd ws
+          cd "${WS_DIR}"
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
 
-      - name: Build package
+      - name: Build only packages required for MoveIt config validation
         run: |
-          source /opt/ros/humble/setup.bash
-          cd ws
-          colcon list | grep -E '^(fanuc_libs|fanuc_lrmate_description|fanuc_hardware_interface)\s'
-          colcon build --symlink-install --packages-up-to fanuc_er4ia_moveit_config
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          cd "${WS_DIR}"
+          colcon list | grep -E '^('"${DESCRIPTION_PACKAGE}"'|'"${TARGET_PACKAGE}"'|fanuc_hardware_interface|fanuc_libs)\s'
+          colcon build \
+            --symlink-install \
+            --packages-select "${DESCRIPTION_PACKAGE}" "${TARGET_PACKAGE}"
 
       - name: Verify launch Python syntax
         run: |
-          cd ws/src/fanuc_er4ia_moveit_config
+          cd "${WS_DIR}/src/${TARGET_PACKAGE}"
           python3 -m compileall launch
+
+      - name: Validate package manifests, xacro, and launch descriptions
+        run: |
+          source /opt/ros/${ROS_DISTRO}/setup.bash
+          source "${WS_DIR}/install/setup.bash"
+          mkdir -p /tmp/roslog
+          export ROS_LOG_DIR=/tmp/roslog
+
+          mkdir -p "${WS_DIR}/mock_prefix/share/ament_index/resource_index/packages"
+          touch "${WS_DIR}/mock_prefix/share/ament_index/resource_index/packages/fanuc_hardware_interface"
+          ln -sfn "${GITHUB_WORKSPACE}/${WS_DIR}/src/fanuc_driver/fanuc_hardware_interface" \
+            "${WS_DIR}/mock_prefix/share/fanuc_hardware_interface"
+          export AMENT_PREFIX_PATH="${GITHUB_WORKSPACE}/${WS_DIR}/mock_prefix:${AMENT_PREFIX_PATH}"
+
+          test -f "${WS_DIR}/build/${TARGET_PACKAGE}/ament_cmake_core/package.cmake"
+          test -f "${WS_DIR}/src/${TARGET_PACKAGE}/package.xml"
+
+          xacro "${WS_DIR}/src/${TARGET_PACKAGE}/config/er4ia.urdf.xacro" > /tmp/er4ia.urdf
+
+          export WORKSPACE="${GITHUB_WORKSPACE}/${WS_DIR}"
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          workspace = Path(os.environ["WORKSPACE"])
+          package_dir = workspace / "src" / "fanuc_er4ia_moveit_config"
+          launch_dir = package_dir / "launch"
+          validated = []
+
+          ET.parse(package_dir / "package.xml")
+
+          for launch_file in sorted(launch_dir.glob("*.launch.py")):
+              spec = importlib.util.spec_from_file_location(launch_file.stem, launch_file)
+              module = importlib.util.module_from_spec(spec)
+              assert spec.loader is not None
+              spec.loader.exec_module(module)
+              launch_description = module.generate_launch_description()
+              assert launch_description is not None
+              validated.append(launch_file.name)
+
+          print("Validated launch files:")
+          for name in validated:
+              print(f"  - {name}")
+          PY
