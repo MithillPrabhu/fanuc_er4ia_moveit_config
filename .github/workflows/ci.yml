@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+        with:
+          path: ws/src/fanuc_er4ia_moveit_config
+
+      - name: Checkout FANUC description packages
+        uses: actions/checkout@v4
+        with:
+          repository: FANUC-CORPORATION/fanuc_description
+          ref: main
+          path: ws/src/fanuc_description
+
+      - name: Checkout FANUC driver packages
+        uses: actions/checkout@v4
+        with:
+          repository: FANUC-CORPORATION/fanuc_driver
+          ref: humble
+          path: ws/src/fanuc_driver
+
+      - name: Setup ROS 2 Humble
+        uses: ros-tooling/setup-ros@0.7
+        with:
+          required-ros-distributions: humble
+
+      - name: Install rosdep dependencies
+        run: |
+          cd ws
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
+
+      - name: Build package
+        run: |
+          source /opt/ros/humble/setup.bash
+          cd ws
+          colcon build --symlink-install --packages-select fanuc_er4ia_moveit_config
+
+      - name: Verify launch Python syntax
+        run: |
+          cd ws/src/fanuc_er4ia_moveit_config
+          python3 -m compileall launch

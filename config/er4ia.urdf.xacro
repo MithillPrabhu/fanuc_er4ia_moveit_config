@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="er4ia">
+  <xacro:arg
+    name="initial_positions_file"
+    default="$(find fanuc_er4ia_moveit_config)/config/initial_positions.yaml"
+  />
+
+  <!-- Import the ER-4iA kinematic model. -->
+  <xacro:include filename="$(find fanuc_lrmate_description)/robot/er4ia.urdf.xacro"/>
+
+  <!-- Attach a lightweight ros2_control mock hardware definition for demo use. -->
+  <xacro:include filename="er4ia.ros2_control.xacro"/>
+
+  <xacro:er4ia_ros2_control
+    name="FakeSystem"
+    initial_positions_file="$(arg initial_positions_file)"
+  />
+</robot>

@@ -1,0 +1,25 @@
+name: Feature Request
+description: Suggest an improvement for the package or documentation.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the feature or improvement you want to see.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Explain the problem this feature would solve.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Share any implementation ideas, constraints, or alternatives you have considered.

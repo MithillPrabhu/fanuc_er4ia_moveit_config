@@ -1,0 +1,19 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: fanuc_lrmate_description
+    relative_path: robot/er4ia.urdf.xacro
+  srdf:
+    relative_path: config/er4ia.srdf
+  package_settings:
+    author_name: Mithill Prabhu
+    author_email: psmithill27@gmail.com
+    generated_timestamp: 1783677590
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
