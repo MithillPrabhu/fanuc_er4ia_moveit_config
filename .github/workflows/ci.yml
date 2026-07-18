@@ -13,26 +13,26 @@ jobs:
 
     steps:
       - name: Checkout package repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ws/src/fanuc_er4ia_moveit_config
 
       - name: Checkout FANUC description packages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: FANUC-CORPORATION/fanuc_description
           ref: main
           path: ws/src/fanuc_description
 
       - name: Checkout FANUC driver packages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: FANUC-CORPORATION/fanuc_driver
           ref: humble
           path: ws/src/fanuc_driver
 
       - name: Setup ROS 2 Humble
-        uses: ros-tooling/setup-ros@0.7
+        uses: ros-tooling/setup-ros@0.7.18
         with:
           required-ros-distributions: humble
 
