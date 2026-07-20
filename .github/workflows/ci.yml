@@ -45,7 +45,12 @@ jobs:
         run: |
           cd "${WS_DIR}"
           rosdep update
-          rosdep install --from-paths src --ignore-src -r -y --skip-keys "ros-humble-warehouse-ros-mongo"
+          rosdep install \
+              --from-paths src \
+              --ignore-src \
+              -r -y \
+              --rosdistro humble \
+              --skip-keys="warehouse_ros_mongo"
 
       - name: Build only packages required for MoveIt config validation
         run: |
