@@ -7,10 +7,11 @@
   <xacro:include filename="er4ia.ros2_control.xacro"/>
 
   <link name="world"/>
+  <link name="ee_link"/>
+
   <xacro:er4ia parent="world" child="ee_link">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:er4ia>
-  <link name="ee_link"/>
 
   <xacro:er4ia_ros2_control
     name="FakeSystem"
