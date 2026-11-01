@@ -1,6 +1,15 @@
 # `fanuc_er4ia_moveit_config`
 
+[![CI](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/ci.yml/badge.svg)](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/ci.yml)
+![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-22314E?logo=ros)
+![MoveIt 2](https://img.shields.io/badge/MoveIt-2-1f6feb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 MoveIt 2 configuration package for the FANUC ER-4iA industrial robot on ROS 2 Humble.
+
+<p align="center">
+  <img src="docs/images/robot_model.png" alt="FANUC ER-4iA robot model in RViz with the MoveIt interactive marker" width="420">
+</p>
 
 This repository packages the SRDF, controller settings, kinematics, RViz profile, and launch files needed to bring up the ER-4iA with MoveIt 2. It is intended for simulation, mock-hardware development, and integration with the FANUC ROS 2 driver stack.
 
@@ -30,7 +39,7 @@ fanuc_er4ia_moveit_config/
 ├── config/                  # MoveIt, ros2_control, SRDF, RViz, and kinematics settings
 ├── launch/                  # Demo, MoveIt, RViz, controller, and setup assistant launch files
 ├── .github/                 # CI, issue templates, and pull request template
-├── docs/images/             # Placeholder location for RViz screenshots and other docs assets
+├── docs/images/             # RViz screenshots used in this README
 ├── CMakeLists.txt
 ├── package.xml
 ├── README.md
@@ -60,7 +69,7 @@ Create or reuse a ROS 2 Humble workspace and place this package in `src/` alongs
 ```bash
 mkdir -p ~/fanuc_ws/src
 cd ~/fanuc_ws/src
-git clone <your-repository-url> fanuc_er4ia_moveit_config
+git clone https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config.git
 git clone https://github.com/FANUC-CORPORATION/fanuc_description.git
 git clone --branch humble https://github.com/FANUC-CORPORATION/fanuc_driver.git
 ```
@@ -116,14 +125,13 @@ ros2 launch fanuc_er4ia_moveit_config setup_assistant.launch.py
 
 ## RViz Screenshots
 
-Add screenshots under `docs/images/` and reference them here for release documentation.
+MoveIt 2 MotionPlanning panel with the `arm` planning group loaded:
 
-- `docs/images/rviz-demo.png`
-- `docs/images/planning-scene.png`
+![MoveIt 2 MotionPlanning panel in RViz with the FANUC ER-4iA](docs/images/rviz.png)
 
 ## Future Work
 
-- Add automated screenshot assets and richer documentation for RViz workflows
+- Richer documentation for RViz planning workflows
 - Add test coverage for launch files
 - Add example end-effector integration notes
 - Add real-hardware commissioning guidance
@@ -134,4 +142,5 @@ This project is released under the MIT License. See [LICENSE](LICENSE).
 
 ## Author
 
-Mithill Prabhu
+**Mithill Prabhu**, Robotics & Automation Engineer
+[Portfolio](https://mithillprabhu.github.io) · [LinkedIn](https://www.linkedin.com/in/mithill-prabhu/) · psmithill27@gmail.com
