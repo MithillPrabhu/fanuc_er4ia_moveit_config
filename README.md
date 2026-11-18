@@ -1,6 +1,7 @@
 # `fanuc_er4ia_moveit_config`
 
 [![CI](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/ci.yml/badge.svg)](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/ci.yml)
+[![Integration](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/integration.yml/badge.svg)](https://github.com/MithillPrabhu/fanuc_er4ia_moveit_config/actions/workflows/integration.yml)
 ![ROS 2 Humble](https://img.shields.io/badge/ROS%202-Humble-22314E?logo=ros)
 ![MoveIt 2](https://img.shields.io/badge/MoveIt-2-1f6feb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -129,6 +130,15 @@ ros2 launch fanuc_er4ia_moveit_config moveit_rviz.launch.py
 ros2 launch fanuc_er4ia_moveit_config setup_assistant.launch.py
 ```
 
+### Tools
+
+| Command | What it does |
+| --- | --- |
+| `ros2 run fanuc_er4ia_moveit_config fanuc_connection_check.py <ip>` | Read-only check that RMI (TCP 16001) and Stream Motion (UDP 60015) answer |
+| `ros2 run fanuc_er4ia_moveit_config er4ia_motion_check.py` | Plans and executes 4 joint goals through MoveIt, then prints PASS or FAIL |
+| `ros2 run fanuc_er4ia_moveit_config fanuc_controller_emulator.py` | Minimal RMI + Stream Motion stand-in for testing without ROBOGUIDE. Not FANUC software. |
+| `test/integration_test.sh mock\|emulator` | End-to-end test that CI runs |
+
 ## RViz Screenshots
 
 MoveIt 2 MotionPlanning panel with the `arm` planning group loaded:
@@ -138,7 +148,6 @@ MoveIt 2 MotionPlanning panel with the `arm` planning group loaded:
 ## Future Work
 
 - Richer documentation for RViz planning workflows
-- Add test coverage for launch files
 - Add example end-effector integration notes
 
 ## License

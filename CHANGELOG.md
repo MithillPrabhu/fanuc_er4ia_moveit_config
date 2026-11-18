@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 - `docs/roboguide_setup.md`: step-by-step guide to control a ROBOGUIDE virtual ER-4iA from
   Ubuntu / ROS 2 Humble over Wi-Fi.
 - `config/fanuc_moveit_controllers.yaml`: MoveIt `Ros2ControlManager` settings for the FANUC driver.
+- `scripts/fanuc_connection_check.py`: read-only reachability check for RMI and Stream Motion.
+- `scripts/er4ia_motion_check.py`: MoveIt plan-and-execute smoke test with PASS/FAIL.
+- `scripts/fanuc_controller_emulator.py`: minimal RMI + Stream Motion stand-in for testing without ROBOGUIDE.
+- `test/integration_test.sh` and `.github/workflows/integration.yml`: end-to-end tests that build the
+  FANUC driver and move the robot with mock hardware and through the emulator.
 
 ### Changed
 

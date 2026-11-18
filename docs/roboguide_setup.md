@@ -117,9 +117,25 @@ works, MoveIt and the description side are fine.
 Run these from Ubuntu, replacing the IP with your Windows PC's:
 
 ```bash
-ping -c 4 192.168.1.48            # basic reachability
-nc -vz 192.168.1.48 16001         # RMI port must report "succeeded"/"open"
+ping -c 4 192.168.1.48
+ros2 run fanuc_er4ia_moveit_config fanuc_connection_check.py 192.168.1.48
 ```
+
+`fanuc_connection_check.py` makes two read-only checks:
+
+- It opens a TCP connection to RMI port 16001, which needs **R912**.
+- It sends a Stream Motion capability request on UDP 60015, which needs **J519**, and prints the
+  controller's stream period and version.
+
+Both checks must show `[OK]` before the driver can connect:
+
+```text
+[OK] RMI TCP 192.168.1.48:16001 - connection accepted
+[OK] Stream Motion UDP 192.168.1.48:60015 - Stream Motion version 4, period 8 ms
+```
+
+If TCP is OK but UDP fails, the Windows firewall is blocking UDP 60015, or the virtual controller
+doesn't have J519.
 
 If ping fails, the two PCs can't see each other. Common causes:
 
@@ -144,6 +160,13 @@ ros2 launch fanuc_er4ia_moveit_config fanuc_er4ia.launch.py \
    ROBOGUIDE moves.
 3. Start slowly: use the MotionPlanning panel's velocity/acceleration scaling (defaults are 10%).
 
+For a scripted test, this moves the robot through four small joint poses at 20% speed and
+reports PASS or FAIL:
+
+```bash
+ros2 run fanuc_er4ia_moveit_config er4ia_motion_check.py
+```
+
 Useful checks while the system is running:
 
 ```bash
@@ -167,7 +190,26 @@ Stream Motion sends a UDP packet every controller cycle, typically every 8 ms. O
 - **For a real robot, use a wired Ethernet link on an isolated port.** FANUC recommends this.
   Don't run real hardware over Wi-Fi.
 
-## 10. Troubleshooting
+## 10. Test without ROBOGUIDE (emulator)
+
+`scripts/fanuc_controller_emulator.py` is a small stand-in for the controller's RMI and Stream
+Motion interfaces. With it you can test the complete ROS side, including the real
+`fanuc_hardware_interface` and its networking, before you have ROBOGUIDE set up:
+
+```bash
+# terminal 1 (it can also run on another PC on the Wi-Fi)
+ros2 run fanuc_er4ia_moveit_config fanuc_controller_emulator.py
+# terminal 2
+ros2 launch fanuc_er4ia_moveit_config fanuc_er4ia.launch.py use_mock:=false robot_ip:=127.0.0.1
+# terminal 3
+ros2 run fanuc_er4ia_moveit_config er4ia_motion_check.py
+```
+
+`test/integration_test.sh emulator` runs all three and exits 0 on success. CI runs it on every
+push. The emulated robot follows the commands exactly and has no alarms or safety logic, so
+ROBOGUIDE is still the real test.
+
+## 11. Troubleshooting
 
 | Symptom | Likely cause and fix |
 | --- | --- |
