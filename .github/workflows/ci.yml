@@ -26,14 +26,14 @@ jobs:
         with:
           repository: FANUC-CORPORATION/fanuc_description
           ref: main
-          path: ws/src/fanuc_description
+          path: deps/fanuc_description
 
       - name: Checkout FANUC driver packages
         uses: actions/checkout@v6
         with:
           repository: FANUC-CORPORATION/fanuc_driver
           ref: humble
-          path: ws/src/fanuc_driver
+          path: deps/fanuc_driver
 
       - name: Setup ROS 2 Humble
         uses: ros-tooling/setup-ros@0.7.18
@@ -49,7 +49,7 @@ jobs:
             --ignore-src \
             -r -y \
             --rosdistro "${ROS_DISTRO}" \
-            --skip-keys="warehouse_ros_mongo fanuc_hardware_interface fanuc_lrmate_description"
+            --skip-keys="warehouse_ros_mongo fanuc_hardware_interface fanuc_lrmate_description fanuc_controllers fanuc_moveit_config"
 
       - name: Build MoveIt configuration package
         run: |
@@ -84,10 +84,10 @@ jobs:
           done
 
           ln -sfn \
-            "${GITHUB_WORKSPACE}/${WS_DIR}/src/fanuc_description/fanuc_lrmate_description" \
+            "${GITHUB_WORKSPACE}/deps/fanuc_description/fanuc_lrmate_description" \
             "${MOCK_PREFIX}/share/fanuc_lrmate_description"
           ln -sfn \
-            "${GITHUB_WORKSPACE}/${WS_DIR}/src/fanuc_driver/fanuc_hardware_interface" \
+            "${GITHUB_WORKSPACE}/deps/fanuc_driver/fanuc_hardware_interface" \
             "${MOCK_PREFIX}/share/fanuc_hardware_interface"
 
           export AMENT_PREFIX_PATH="${MOCK_PREFIX}:${AMENT_PREFIX_PATH}"

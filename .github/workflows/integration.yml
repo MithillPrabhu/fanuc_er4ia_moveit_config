@@ -1,0 +1,78 @@
+name: Integration (FANUC driver + emulator)
+
+# Builds the official FANUC ROS 2 driver (humble) with this package, then moves
+# the ER-4iA through MoveIt with mock hardware and through the real
+# fanuc_hardware_interface against scripts/fanuc_controller_emulator.py.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    env:
+      ROS_DISTRO: humble
+    steps:
+      - name: Checkout this package
+        uses: actions/checkout@v4
+        with:
+          path: ws/src/fanuc_er4ia_moveit_config
+
+      - name: Checkout FANUC description
+        uses: actions/checkout@v4
+        with:
+          repository: FANUC-CORPORATION/fanuc_description
+          ref: main
+          path: ws/src/fanuc_description
+          lfs: true
+
+      - name: Checkout FANUC driver (humble)
+        uses: actions/checkout@v4
+        with:
+          repository: FANUC-CORPORATION/fanuc_driver
+          ref: humble
+          path: ws/src/fanuc_driver
+          submodules: recursive
+
+      - name: Setup ROS 2 Humble
+        uses: ros-tooling/setup-ros@0.7.18
+        with:
+          required-ros-distributions: humble
+
+      - name: Install dependencies
+        run: |
+          cd ws
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y --rosdistro humble \
+            --skip-keys="warehouse_ros_mongo"
+
+      - name: Build
+        run: |
+          source /opt/ros/humble/setup.bash
+          cd ws
+          colcon build --symlink-install --cmake-args -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+
+      - name: Motion test with mock hardware
+        run: |
+          source /opt/ros/humble/setup.bash
+          source ws/install/setup.bash
+          export ROS_DOMAIN_ID=11
+          ws/src/fanuc_er4ia_moveit_config/test/integration_test.sh mock
+
+      - name: Motion test through fanuc_hardware_interface + emulator
+        run: |
+          source /opt/ros/humble/setup.bash
+          source ws/install/setup.bash
+          export ROS_DOMAIN_ID=12
+          ws/src/fanuc_er4ia_moveit_config/test/integration_test.sh emulator
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-logs
+          path: /tmp/er4ia_test
