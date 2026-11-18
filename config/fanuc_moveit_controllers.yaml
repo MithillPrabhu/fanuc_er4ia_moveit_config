@@ -1,0 +1,22 @@
+# MoveIt controller settings used with the FANUC ROS 2 driver
+# (launch/fanuc_er4ia.launch.py). Copied from fanuc_moveit_config.
+#
+# Ros2ControlManager discovers the driver's controllers
+# (fanuc_controllers/ScaledJointTrajectoryController, named
+# joint_trajectory_controller) directly from the controller manager, so no
+# controller list is needed here. The trajectory plugin that makes this work
+# is exported by the fanuc_moveit_config package.
+#
+# config/moveit_controllers.yaml is still used by the mock-only demo.launch.py.
+
+trajectory_execution:
+  allowed_execution_duration_scaling: 1.0
+  allowed_goal_duration_margin: 1000.0
+  allowed_start_tolerance: 0.01
+
+moveit_controller_manager: moveit_ros_control_interface/Ros2ControlManager
+
+controller_manager_timeout: 10.0
+
+octomap:
+  enabled: false

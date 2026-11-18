@@ -101,9 +101,10 @@ Starts a self-contained mock-hardware MoveIt demo:
 ros2 launch fanuc_er4ia_moveit_config demo.launch.py
 ```
 
-### Hardware-oriented launch
+### FANUC driver launch (mock, ROBOGUIDE, or real controller)
 
-Starts the ER-4iA MoveIt stack using the FANUC hardware interface model:
+Starts MoveIt 2 on top of the official FANUC ROS 2 driver (`fanuc_hardware_interface`,
+`ScaledJointTrajectoryController`). With `use_mock:=true` it runs without a controller:
 
 ```bash
 ros2 launch fanuc_er4ia_moveit_config fanuc_er4ia.launch.py use_mock:=true
@@ -114,6 +115,11 @@ To target a physical or ROBOGUIDE controller:
 ```bash
 ros2 launch fanuc_er4ia_moveit_config fanuc_er4ia.launch.py use_mock:=false robot_ip:=192.168.1.48
 ```
+
+For ROBOGUIDE, `robot_ip` is the IP address of the Windows PC running ROBOGUIDE. The virtual
+controller needs the J519 + R912 (or S636) software options. See
+**[docs/roboguide_setup.md](docs/roboguide_setup.md)** for the full Windows, ROBOGUIDE and
+network setup over Wi-Fi, plus troubleshooting.
 
 ### Additional launch examples
 
@@ -134,7 +140,6 @@ MoveIt 2 MotionPlanning panel with the `arm` planning group loaded:
 - Richer documentation for RViz planning workflows
 - Add test coverage for launch files
 - Add example end-effector integration notes
-- Add real-hardware commissioning guidance
 
 ## License
 

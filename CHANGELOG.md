@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2026-11-18
+
+### Added
+
+- `docs/roboguide_setup.md`: step-by-step guide to control a ROBOGUIDE virtual ER-4iA from
+  Ubuntu / ROS 2 Humble over Wi-Fi.
+- `config/fanuc_moveit_controllers.yaml`: MoveIt `Ros2ControlManager` settings for the FANUC driver.
+
+### Changed
+
+- `launch/fanuc_er4ia.launch.py` now follows FANUC's `fanuc_moveit_template.launch.py`. It uses
+  FANUC's control launch files, so the hardware interface gets its GPIO configuration, the
+  `ScaledJointTrajectoryController`, the correct update rate and controller spawning. Previously it
+  started a plain 100 Hz `JointTrajectoryController` with no GPIO configuration, and that couldn't
+  drive a ROBOGUIDE or real controller.
+- Added the `fanuc_controllers`, `fanuc_moveit_config` and `moveit_ros_control_interface` runtime
+  dependencies.
+
 ## [0.3.0] - 2026-07-18
 
 ### Changed
